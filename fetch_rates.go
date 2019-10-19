@@ -20,14 +20,9 @@ type rate struct {
 }
 
 func list(event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	rates := &[]rate{
-		rate{
-			ID:   "id",
-			Bank: "brh",
-			Day:  "2019-10-19",
-			Buy:  92.09,
-			Sell: 92.09,
-		},
+	rates, err := getItems()
+	if err != nil {
+		return serverError(err)
 	}
 
 	js, err := json.Marshal(rates)
@@ -36,6 +31,9 @@ func list(event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, 
 	}
 
 	return events.APIGatewayProxyResponse{
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
 		StatusCode: http.StatusOK,
 		Body:       string(js),
 	}, nil
